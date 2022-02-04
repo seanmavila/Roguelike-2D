@@ -63,12 +63,16 @@ public class Player : MovingObject
     {
         food--;
         foodText.text = "Food: " + food;
+
         base.AttemptMove<T>(xDir, yDir);
+
         RaycastHit2D hit;
-        if (Move(xDir, yDir, out hit))
+        Move(xDir, yDir, out hit);
+        if (hit.transform == null)
         {
             SoundManager.instance.RandomizeSfx(moveSound1, moveSound2);
         }
+
         CheckIfGameOver();
         GameManager.instance.playersTurn = false;
     }
@@ -103,9 +107,9 @@ public class Player : MovingObject
         animator.SetTrigger("playerChop");
     }
 
-    private void Restart()
+    public void Restart()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(0);
     }
 
     public void LoseFood(int loss)

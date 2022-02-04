@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public float levelStartDelay = 2f;
-    public float turnDelay = 0.3f;
+    public float turnDelay = 0.1f;
     public int playerFoodPoints = 100;
     public static GameManager instance = null;
     public BoardManager boardScript;
@@ -15,10 +15,13 @@ public class GameManager : MonoBehaviour
 
     private Text levelText;
     private GameObject levelImage;
+    private GameObject exitImage;
+    private GameObject buttonPanel;
     private int level = 1;
     private List<Enemy> enemies;
     private bool enemiesMoving;
     private bool doingSetup;
+    private bool menuOpen = false;
 
     // Start is called before the first frame update
     void Awake()
@@ -47,6 +50,11 @@ public class GameManager : MonoBehaviour
     void InitGame()
     {
         doingSetup = true;
+        exitImage = GameObject.Find("Exit Menu");
+        buttonPanel = GameObject.Find("Button Panel");
+        exitImage.SetActive(false);
+        buttonPanel.SetActive(false);
+
 
         levelImage = GameObject.Find("Level Image");
         levelText = GameObject.Find("Level Text").GetComponent<Text>();
@@ -66,15 +74,23 @@ public class GameManager : MonoBehaviour
     }
 
     public void GameOver()
-    {
+    {      
         levelText.text = "Afer " + level + " days, you have perished...";
         levelImage.SetActive(true);
+        buttonPanel.SetActive(true);
+        exitImage.SetActive(false);
         enabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            menuOpen = !menuOpen;
+            exitImage.SetActive(menuOpen);
+        }
+        
         if (playersTurn || enemiesMoving || doingSetup)
         {
             return;
@@ -106,4 +122,10 @@ public class GameManager : MonoBehaviour
         playersTurn = true;
         enemiesMoving = false;
     }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
 }
